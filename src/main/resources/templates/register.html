@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobKaro — Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+<div class="auth-container wide">
+  <div class="auth-logo">
+    <span class="logo-job">Job</span><span class="logo-karo">Karo</span>
+    <p class="logo-tagline">Work when you want. Hire when you need.</p>
+  </div>
+
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <form method="POST" action="/register" class="auth-form">
+    <h1 class="form-title">Create Account</h1>
+    <p class="form-subtitle">Join thousands of workers and providers</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="Rahul Kumar" required>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" name="city" placeholder="Phagwara" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="your@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="text" name="phone" placeholder="9876543210" maxlength="10" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Minimum 6 characters" required>
+    </div>
+
+    <div class="form-group">
+      <label>I want to</label>
+      <div class="role-selector">
+        <label class="role-option">
+          <input type="radio" name="role" value="worker" checked>
+          <span class="role-card">
+            <span class="role-icon">👷</span>
+            <span class="role-label">Find Work</span>
+            <span class="role-sub">I'm a worker</span>
+          </span>
+        </label>
+        <label class="role-option">
+          <input type="radio" name="role" value="provider">
+          <span class="role-card">
+            <span class="role-icon">🏢</span>
+            <span class="role-label">Hire Workers</span>
+            <span class="role-sub">I'm a provider</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full">Create Account →</button>
+    <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+  </form>
+</div>
+</body>
+</html>

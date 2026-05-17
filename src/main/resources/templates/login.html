@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobKaro — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+  <!-- Logo -->
+  <div class="auth-logo">
+    <span class="logo-job">Job</span><span class="logo-karo">Karo</span>
+    <p class="logo-tagline">Work when you want. Hire when you need.</p>
+  </div>
+
+  <!-- Alerts -->
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${param.registered}" class="alert alert-success">Account created! Please login.</div>
+
+  <!-- Login Form -->
+  <form method="POST" action="/login" class="auth-form">
+    <h1 class="form-title">Sign In</h1>
+    <p class="form-subtitle">Welcome back to JobKaro</p>
+
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" name="username" placeholder="your@email.com" required autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full">Sign In →</button>
+
+    <p class="auth-switch">Don't have an account? <a href="/register">Register here</a></p>
+  </form>
+
+  <!-- Demo Credentials -->
+  <div class="demo-box">
+    <p class="demo-title">🔑 Demo Credentials</p>
+    <div class="demo-row">
+      <span class="demo-role worker">👷 Worker</span>
+      <span class="demo-cred">rahul@example.com / demo123</span>
+    </div>
+    <div class="demo-row">
+      <span class="demo-role provider">🏢 Provider</span>
+      <span class="demo-cred">amit@quickship.com / demo123</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

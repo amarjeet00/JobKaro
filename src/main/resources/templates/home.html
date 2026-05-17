@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobKaro — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="logo-job">Job</span><span class="logo-karo">Karo</span>
+  </div>
+  <div class="nav-links">
+    <a href="/home" class="nav-link active">🏠 Home</a>
+    <a href="/jobs" class="nav-link">💼 Jobs</a>
+    <a th:if="${user.provider}" href="/post-job" class="nav-link">➕ Post Job</a>
+    <a href="/profile" class="nav-link">👤 Profile</a>
+  </div>
+  <div class="nav-user">
+    <span class="user-badge" th:text="${user.name}"></span>
+    <span class="role-badge" th:text="${user.role}"></span>
+    <a href="/logout" class="btn btn-ghost">Logout</a>
+  </div>
+</nav>
+
+<main class="main-content">
+
+  <!-- Welcome Header -->
+  <div class="page-header">
+    <div>
+      <h1>Welcome back, <span class="accent" th:text="${user.name.split(' ')[0]}"></span> 👋</h1>
+      <p class="subtitle" th:text="${user.worker} ? 'Ready to find your next job?' : 'Manage your job postings'"></p>
+    </div>
+    <div class="header-actions">
+      <a th:if="${user.worker}"   href="/jobs" class="btn btn-primary">Browse Jobs</a>
+      <a th:if="${user.provider}" href="/post-job" class="btn btn-primary">+ Post a Job</a>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-icon">💼</span>
+      <span class="stat-value" th:text="${jobs.size()}">0</span>
+      <span class="stat-label" th:text="${user.worker} ? 'Jobs Near You' : 'My Postings'"></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⚡</span>
+      <span class="stat-value" th:text="${urgentJobs.size()}">0</span>
+      <span class="stat-label">Urgent Now</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <span class="stat-value" th:text="${user.completedJobs}">0</span>
+      <span class="stat-label">Completed</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⭐</span>
+      <span class="stat-value" th:text="${#numbers.formatDecimal(user.rating, 1, 1)}">0.0</span>
+      <span class="stat-label">Your Rating</span>
+    </div>
+  </div>
+
+  <!-- Urgent Jobs -->
+  <div th:if="${!urgentJobs.isEmpty()}" class="section">
+    <div class="section-header">
+      <h2>⚡ Urgent Jobs</h2>
+      <a href="/jobs" class="see-all">See all →</a>
+    </div>
+    <div class="jobs-grid">
+      <div th:each="job : ${urgentJobs}" class="job-card urgent">
+        <div class="job-card-top">
+          <span class="job-icon" th:text="${job.categoryIcon}"></span>
+          <span class="urgent-badge">URGENT</span>
+        </div>
+        <h3 class="job-title" th:text="${job.title}"></h3>
+        <p class="job-meta">📍 <span th:text="${job.city}"></span> · ⏱ <span th:text="${job.duration}"></span></p>
+        <p class="job-desc" th:text="${#strings.abbreviate(job.description, 80)}"></p>
+        <div class="job-card-footer">
+          <span class="job-pay" th:text="${job.paymentDisplay}"></span>
+          <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn btn-small btn-primary">Apply →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Jobs / My Jobs -->
+  <div class="section">
+    <div class="section-header">
+      <h2 th:text="${user.worker} ? '💼 Jobs in ' + ${user.city} : '📋 My Job Postings'"></h2>
+      <a th:if="${user.worker}" href="/jobs" class="see-all">See all →</a>
+    </div>
+    <div th:if="${jobs.isEmpty()}" class="empty-state">
+      <p>🔍 No jobs found.</p>
+      <a th:if="${user.provider}" href="/post-job" class="btn btn-primary">Post Your First Job</a>
+    </div>
+    <div th:if="${!jobs.isEmpty()}" class="jobs-grid">
+      <div th:each="job : ${jobs}" class="job-card" th:classappend="${job.urgent} ? 'urgent' : ''">
+        <div class="job-card-top">
+          <span class="job-icon" th:text="${job.categoryIcon}"></span>
+          <span th:if="${job.urgent}" class="urgent-badge">URGENT</span>
+          <span class="status-badge" th:text="${job.status}" th:classappend="'status-' + ${job.status}"></span>
+        </div>
+        <h3 class="job-title" th:text="${job.title}"></h3>
+        <p class="job-meta">📍 <span th:text="${job.city}"></span> · ⏱ <span th:text="${job.duration}"></span> · 👥 <span th:text="${job.workersNeeded}"></span> needed</p>
+        <p class="job-desc" th:text="${#strings.abbreviate(job.description, 80)}"></p>
+        <div class="job-card-footer">
+          <span class="job-pay" th:text="${job.paymentDisplay}"></span>
+          <div class="card-actions">
+            <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn btn-small btn-ghost">View</a>
+            <!-- Provider: update status -->
+            <form th:if="${user.provider and job.status == 'open'}" method="POST" th:action="@{/jobs/{id}/status(id=${job.id})}">
+              <input type="hidden" name="status" value="ongoing">
+              <button type="submit" class="btn btn-small btn-primary">Mark Ongoing</button>
+            </form>
+            <form th:if="${user.provider and job.status == 'ongoing'}" method="POST" th:action="@{/jobs/{id}/status(id=${job.id})}">
+              <input type="hidden" name="status" value="completed">
+              <button type="submit" class="btn btn-small btn-success">Complete ✓</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <p>JobKaro © 2024 · "Work when you want. Hire when you need." · Academic Java Project</p>
+</footer>
+
+</body>
+</html>

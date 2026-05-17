@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — JobKaro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand"><a href="/home"><span class="logo-job">Job</span><span class="logo-karo">Karo</span></a></div>
+  <div class="nav-links">
+    <a href="/home" class="nav-link">🏠 Home</a>
+    <a href="/jobs" class="nav-link">💼 Jobs</a>
+    <a href="/profile" class="nav-link active">👤 Profile</a>
+  </div>
+  <a href="/logout" class="btn btn-ghost">Logout</a>
+</nav>
+
+<main class="main-content narrow">
+  <div class="profile-card card">
+    <div class="profile-header">
+      <div class="profile-avatar" th:text="${#strings.toUpperCase(#strings.substring(user.name,0,1))}"></div>
+      <div class="profile-info">
+        <h1 th:text="${user.name}"></h1>
+        <p class="profile-email" th:text="${user.email}"></p>
+        <div class="profile-badges">
+          <span class="role-badge" th:text="${user.role}"></span>
+          <span class="city-badge">📍 <span th:text="${user.city}"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="pstat">
+        <span class="pstat-val" th:text="${user.completedJobs}">0</span>
+        <span class="pstat-label">Jobs Done</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-val">⭐ <span th:text="${#numbers.formatDecimal(user.rating,1,1)}">0.0</span></span>
+        <span class="pstat-label">Rating</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-val" th:text="${user.totalRatings}">0</span>
+        <span class="pstat-label">Reviews</span>
+      </div>
+      <div class="pstat">
+        <span class="pstat-val" th:text="${user.phone}">-</span>
+        <span class="pstat-label">Phone</span>
+      </div>
+    </div>
+
+    <!-- Member since -->
+    <p class="member-since">Member since <span th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}"></span></p>
+  </div>
+
+  <!-- Provider: My Jobs -->
+  <div th:if="${user.provider and myJobs != null and !myJobs.isEmpty()}" class="section">
+    <h2>📋 My Job Postings (<span th:text="${myJobs.size()}"></span>)</h2>
+    <div class="jobs-list">
+      <div th:each="job : ${myJobs}" class="job-list-item">
+        <span class="job-icon" th:text="${job.categoryIcon}"></span>
+        <div class="jli-info">
+          <span class="jli-title" th:text="${job.title}"></span>
+          <span class="jli-meta" th:text="${job.city} + ' · ' + ${job.paymentDisplay}"></span>
+        </div>
+        <span class="status-badge" th:text="${job.status}" th:classappend="'status-' + ${job.status}"></span>
+        <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn btn-small btn-ghost">View</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="footer"><p>JobKaro © 2024</p></footer>
+</body>
+</html>

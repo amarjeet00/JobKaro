@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title th:text="${job.title} + ' — JobKaro'"></title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand"><a href="/home"><span class="logo-job">Job</span><span class="logo-karo">Karo</span></a></div>
+  <div class="nav-links">
+    <a href="/home" class="nav-link">🏠 Home</a>
+    <a href="/jobs" class="nav-link">💼 Jobs</a>
+    <a href="/profile" class="nav-link">👤 Profile</a>
+  </div>
+  <a href="/logout" class="btn btn-ghost">Logout</a>
+</nav>
+
+<main class="main-content narrow">
+  <a href="/jobs" class="back-link">← Back to Jobs</a>
+
+  <div class="job-detail-card" th:classappend="${job.urgent} ? 'urgent-border' : ''">
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="detail-icon" th:text="${job.categoryIcon}"></div>
+      <div>
+        <h1 th:text="${job.title}"></h1>
+        <p class="detail-provider">
+          Posted by <strong th:text="${job.providerName}"></strong>
+          <span class="rating">⭐ <span th:text="${#numbers.formatDecimal(job.providerRating,1,1)}"></span></span>
+        </p>
+      </div>
+      <div class="detail-badges">
+        <span th:if="${job.urgent}" class="urgent-badge">⚡ URGENT</span>
+        <span class="status-badge" th:text="${job.status}" th:classappend="'status-' + ${job.status}"></span>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">💰 Payment</span>
+        <span class="detail-value accent" th:text="${job.paymentDisplay}"></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">📍 Location</span>
+        <span class="detail-value" th:text="${job.address} + ', ' + ${job.city}"></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">📅 Date</span>
+        <span class="detail-value" th:text="${job.jobDate}"></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">⏱ Duration</span>
+        <span class="detail-value" th:text="${job.duration}"></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">👥 Workers Needed</span>
+        <span class="detail-value" th:text="${job.workersNeeded}"></span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">🏷 Category</span>
+        <span class="detail-value" th:text="${job.category.replace('_',' ')}"></span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="detail-section">
+      <h2>Job Description</h2>
+      <p th:text="${job.description}"></p>
+    </div>
+
+    <!-- Action Button (Worker only) -->
+    <div th:if="${user.worker and job.status == 'open'}" class="detail-action">
+      <p class="apply-note">✅ Interested in this job? Contact the provider to confirm details.</p>
+      <a th:href="'mailto:'" class="btn btn-primary btn-large">Apply for this Job →</a>
+    </div>
+
+    <!-- Provider actions -->
+    <div th:if="${user.provider}" class="detail-action">
+      <form th:if="${job.status == 'open'}" method="POST" th:action="@{/jobs/{id}/status(id=${job.id})}">
+        <input type="hidden" name="status" value="ongoing">
+        <button type="submit" class="btn btn-primary">Mark as Ongoing</button>
+      </form>
+      <form th:if="${job.status == 'ongoing'}" method="POST" th:action="@{/jobs/{id}/status(id=${job.id})}">
+        <input type="hidden" name="status" value="completed">
+        <button type="submit" class="btn btn-success">Mark as Completed ✓</button>
+      </form>
+      <form th:if="${job.status == 'open'}" method="POST" th:action="@{/jobs/{id}/status(id=${job.id})}">
+        <input type="hidden" name="status" value="cancelled">
+        <button type="submit" class="btn btn-danger">Cancel Job</button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer class="footer"><p>JobKaro © 2024</p></footer>
+</body>
+</html>

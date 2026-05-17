@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Jobs — JobKaro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand"><a href="/home"><span class="logo-job">Job</span><span class="logo-karo">Karo</span></a></div>
+  <div class="nav-links">
+    <a href="/home" class="nav-link">🏠 Home</a>
+    <a href="/jobs" class="nav-link active">💼 Jobs</a>
+    <a href="/profile" class="nav-link">👤 Profile</a>
+  </div>
+  <a href="/logout" class="btn btn-ghost">Logout</a>
+</nav>
+
+<main class="main-content">
+  <div class="page-header">
+    <h1>Browse Jobs</h1>
+    <form method="GET" action="/jobs" class="search-bar">
+      <input type="text" name="q" placeholder="Search jobs..." th:value="${query}" class="search-input">
+      <input type="text" name="city" placeholder="City..." th:value="${city}" class="search-city">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/jobs" class="btn btn-ghost">Clear</a>
+    </form>
+  </div>
+
+  <!-- Categories quick filter -->
+  <div class="categories">
+    <a th:href="@{/jobs(q='delivery')}"  class="cat-chip">📦 Delivery</a>
+    <a th:href="@{/jobs(q='packing')}"   class="cat-chip">📫 Packing</a>
+    <a th:href="@{/jobs(q='cleaning')}"  class="cat-chip">🧹 Cleaning</a>
+    <a th:href="@{/jobs(q='event')}"     class="cat-chip">🎉 Events</a>
+    <a th:href="@{/jobs(q='shop')}"      class="cat-chip">🛒 Shop Help</a>
+    <a th:href="@{/jobs(q='electrician')}" class="cat-chip">⚡ Electrician</a>
+    <a th:href="@{/jobs(q='plumber')}"   class="cat-chip">🔧 Plumber</a>
+    <a th:href="@{/jobs(q='shifting')}"  class="cat-chip">🏠 Shifting</a>
+  </div>
+
+  <p class="result-count">
+    <span th:text="${jobs.size()}"></span> jobs found
+    <span th:if="${query}"  > for "<em th:text="${query}"></em>"</span>
+    <span th:if="${city}"   > in <em th:text="${city}"></em></span>
+  </p>
+
+  <div th:if="${jobs.isEmpty()}" class="empty-state">
+    <p>😔 No jobs found. Try a different search.</p>
+  </div>
+
+  <div class="jobs-grid" th:if="${!jobs.isEmpty()}">
+    <div th:each="job : ${jobs}" class="job-card" th:classappend="${job.urgent} ? 'urgent' : ''">
+      <div class="job-card-top">
+        <span class="job-icon" th:text="${job.categoryIcon}"></span>
+        <span th:if="${job.urgent}" class="urgent-badge">URGENT</span>
+      </div>
+      <h3 class="job-title" th:text="${job.title}"></h3>
+      <p class="job-provider">by <span th:text="${job.providerName}"></span>
+        <span class="rating">⭐ <span th:text="${#numbers.formatDecimal(job.providerRating,1,1)}"></span></span>
+      </p>
+      <p class="job-meta">📍 <span th:text="${job.city}"></span> · ⏱ <span th:text="${job.duration}"></span> · 👥 <span th:text="${job.workersNeeded}"></span> needed</p>
+      <p class="job-desc" th:text="${#strings.abbreviate(job.description, 100)}"></p>
+      <div class="job-card-footer">
+        <span class="job-pay" th:text="${job.paymentDisplay}"></span>
+        <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn btn-small btn-primary">View & Apply →</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="footer"><p>JobKaro © 2024 — Academic Java Project</p></footer>
+</body>
+</html>

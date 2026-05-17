@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post a Job — JobKaro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand"><a href="/home"><span class="logo-job">Job</span><span class="logo-karo">Karo</span></a></div>
+  <div class="nav-links">
+    <a href="/home" class="nav-link">🏠 Home</a>
+    <a href="/jobs" class="nav-link">💼 Jobs</a>
+    <a href="/post-job" class="nav-link active">➕ Post Job</a>
+    <a href="/profile" class="nav-link">👤 Profile</a>
+  </div>
+  <a href="/logout" class="btn btn-ghost">Logout</a>
+</nav>
+
+<main class="main-content narrow">
+  <div class="page-header">
+    <h1>📝 Post a New Job</h1>
+    <p class="subtitle">Fill in the details to find the right workers</p>
+  </div>
+
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <form method="POST" action="/post-job" class="post-form card">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Job Title *</label>
+        <input type="text" name="title" placeholder="e.g. Delivery Boy Needed" required>
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select name="category" required>
+          <option value="">Select category...</option>
+          <option value="delivery">📦 Delivery</option>
+          <option value="shop_helper">🛒 Shop Helper</option>
+          <option value="construction">🏗️ Construction</option>
+          <option value="packing">📫 Packing</option>
+          <option value="cleaning">🧹 Cleaning</option>
+          <option value="event_helper">🎉 Event Helper</option>
+          <option value="electrician">⚡ Electrician</option>
+          <option value="plumber">🔧 Plumber</option>
+          <option value="house_shifting">🏠 House Shifting</option>
+          <option value="office_helper">🏢 Office Helper</option>
+          <option value="daily_wage">💰 Daily Wage</option>
+          <option value="part_time">⏰ Part-Time</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Job Description *</label>
+      <textarea name="description" placeholder="Describe the work in detail..." rows="4" required></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Payment Amount (₹) *</label>
+        <input type="number" name="payment" placeholder="500" min="50" required>
+      </div>
+      <div class="form-group">
+        <label>Payment Type *</label>
+        <select name="paymentType" required>
+          <option value="daily">Per Day</option>
+          <option value="fixed">Fixed Amount</option>
+          <option value="hourly">Per Hour</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Workers Needed *</label>
+        <input type="number" name="workersNeeded" value="1" min="1" max="100" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Address *</label>
+        <input type="text" name="address" placeholder="Near Bus Stand, GT Road" required>
+      </div>
+      <div class="form-group">
+        <label>City *</label>
+        <input type="text" name="city" th:value="${user.city}" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Job Date *</label>
+        <input type="date" name="jobDate" required>
+      </div>
+      <div class="form-group">
+        <label>Duration *</label>
+        <input type="text" name="duration" placeholder="e.g. 4 hours, 1 day" required>
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="urgent" value="true">
+        <span>⚡ Mark as URGENT — show prominently to workers</span>
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <a href="/home" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary btn-large">Post Job →</button>
+    </div>
+  </form>
+</main>
+<footer class="footer"><p>JobKaro © 2024</p></footer>
+<script>
+  // Set minimum date to today
+  document.querySelector('input[name=jobDate]').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
